@@ -1,11 +1,9 @@
 package com.market.backend.models;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
 import java.time.LocalDateTime;
@@ -15,6 +13,7 @@ import java.time.LocalDateTime;
 public class Product {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "product_id")
     private int id;
 
@@ -24,7 +23,7 @@ public class Product {
     private String name;
 
     @Column(name = "quantity")
-    @NotEmpty(message = "Quantity should be not empty")
+    @NotNull(message = "Quantity should be not null")
     @Min(value = 0,message = "The quantity must be greater than 0")
     private int quantity;
 
