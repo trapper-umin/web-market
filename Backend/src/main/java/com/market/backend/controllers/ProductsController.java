@@ -1,5 +1,6 @@
 package com.market.backend.controllers;
 
+import com.market.backend.dao.ProductsDAO;
 import com.market.backend.models.Product;
 import com.market.backend.services.ProductsService;
 import jakarta.validation.Valid;
@@ -20,13 +21,13 @@ public class ProductsController {
 
     @GetMapping()
     public String index(Model model){
-        model.addAttribute("products",productsService.findAll());
+        model.addAttribute("products", productsService.findAll());
         return "product/index";
     }
 
     @GetMapping("/{id}")
     public String show(@PathVariable("id") int id, Model model){
-        model.addAttribute("product",productsService.findById(id));
+        model.addAttribute("product", productsService.findById(id));
         return "product/show";
     }
 
