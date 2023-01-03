@@ -2,11 +2,13 @@ package com.market.backend.services;
 
 import com.market.backend.models.Product;
 import com.market.backend.repositories.ProductsRepository;
+import com.market.backend.util.Exception.ProductNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @Transactional(readOnly = true)
@@ -22,7 +24,11 @@ public class ProductsService {
     }
 
     public Product findById(int id){
-        return productsRepository.findById(id).orElse(null);
+        return productsRepository.findById(id).orElseThrow(ProductNotFoundException::new);
+    }
+
+    public Optional<Product> findByProductName(String name){
+        return productsRepository.findByName(name);
     }
 
     @Transactional
