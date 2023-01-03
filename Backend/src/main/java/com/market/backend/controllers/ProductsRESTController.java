@@ -1,10 +1,13 @@
 package com.market.backend.controllers;
 
+import com.market.backend.dto.ProductDTO;
 import com.market.backend.models.Product;
 import com.market.backend.services.ProductsService;
 import com.market.backend.util.Exception.*;
-import com.market.backend.util.Validation.ProductNameValidation;
+import com.market.backend.util.Validation.ProductDTONameValidation;
+import com.market.backend.util.Validation.ProductDTOUpdateValidation;
 import jakarta.validation.Valid;
+import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
@@ -12,6 +15,7 @@ import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -19,31 +23,39 @@ import java.util.List;
 public class ProductsRESTController {
 
     private final ProductsService productsService;
-    private final ProductNameValidation productNameValidation;
+    private final ProductDTOUpdateValidation productDTOUpdateValidation;
+    private final ProductDTONameValidation productDTONameValidation;
+    private final ModelMapper modelMapper;
 
-    public ProductsRESTController(ProductsService productsService, ProductNameValidation productNameValidation){
+    public ProductsRESTController(ProductsService productsService, ProductDTOUpdateValidation productUpdateValidation,
+                                  ModelMapper modelMapper, ProductDTONameValidation productDTONameValidation){
         this.productsService=productsService;
-        this.productNameValidation = productNameValidation;
+        this.productDTOUpdateValidation =productUpdateValidation;
+        this.modelMapper=modelMapper;
+        this.productDTONameValidation=productDTONameValidation;
     }
 
     @GetMapping()
-    public List<Product> index(){
+    public List<ProductDTO> index(){
         List<Product> products=productsService.findAll();
         if(products.size()==0){
             throw new ThereAreNoProductsException();
         }
-        return products;
+        List<ProductDTO> productsDTO=new ArrayList<>();
+        for(Product product : products)
+            productsDTO.add(convertToProductDTO(product));
+        return productsDTO;
     }
 
     @GetMapping("/{id}")
-    public Product index(@PathVariable("id") int id){
-        return productsService.findById(id);
+    public ProductDTO index(@PathVariable("id") int id){
+        return convertToProductDTO(productsService.findById(id));
     }
 
     @PostMapping("/new")
-    public ResponseEntity<HttpStatus> create(@RequestBody @Valid Product product,
+    public ResponseEntity<HttpStatus> create(@RequestBody @Valid ProductDTO productDTO,
                                              BindingResult bindingResult){
-        productNameValidation.validate(product,bindingResult);
+        productDTONameValidation.validate(productDTO,bindingResult);
         if(bindingResult.hasErrors()){
             StringBuilder message =new StringBuilder();
             List<FieldError> errors=bindingResult.getFieldErrors();
@@ -53,14 +65,14 @@ public class ProductsRESTController {
             }
             throw new ProductNotCreatedException(message.toString());
         }
-        productsService.create(product);
+        productsService.create(converToProduct(productDTO));
         return ResponseEntity.ok(HttpStatus.OK);
     }
 
     @PatchMapping("/{id}/edit")
-    public ResponseEntity<HttpStatus> update(@PathVariable("id") int id,@RequestBody @Valid Product product,
+    public ResponseEntity<HttpStatus> update(@PathVariable("id") int id,@RequestBody @Valid ProductDTO productDTO,
                                              BindingResult bindingResult){
-        productNameValidation.validate(product,bindingResult);
+        productDTOUpdateValidation.validate(productDTO,bindingResult);
         if(bindingResult.hasErrors()){
             StringBuilder message=new StringBuilder();
             List<FieldError> errors=bindingResult.getFieldErrors();
@@ -70,7 +82,7 @@ public class ProductsRESTController {
             }
             throw new ProductNotUpdatedException(message.toString());
         }
-        productsService.update(id,product);
+        productsService.update(id,converToProduct(productDTO));
         return ResponseEntity.ok(HttpStatus.OK);
     }
 
@@ -118,5 +130,13 @@ public class ProductsRESTController {
           LocalDateTime.now()
         );
         return new ResponseEntity<>(response,HttpStatus.BAD_REQUEST);
+    }
+
+    private Product converToProduct(ProductDTO productDTO){
+        return modelMapper.map(productDTO,Product.class);
+    }
+
+    private ProductDTO convertToProductDTO(Product product){
+        return modelMapper.map(product,ProductDTO.class);
     }
 }
