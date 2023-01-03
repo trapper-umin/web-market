@@ -1,8 +1,8 @@
 package com.market.backend.controllers;
 
-import com.market.backend.dao.ProductsDAO;
 import com.market.backend.models.Product;
 import com.market.backend.services.ProductsService;
+import com.market.backend.util.Validation.ProductNameValidation;
 import jakarta.validation.Valid;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -14,9 +14,11 @@ import org.springframework.web.bind.annotation.*;
 public class ProductsController {
 
     private final ProductsService productsService;
+    private final ProductNameValidation productNameValidation;
 
-    public ProductsController(ProductsService productsService){
+    public ProductsController(ProductsService productsService, ProductNameValidation productNameValidation){
         this.productsService=productsService;
+        this.productNameValidation = productNameValidation;
     }
 
     @GetMapping()
@@ -38,7 +40,7 @@ public class ProductsController {
 
     @PostMapping("/new")
     public String createPost(@ModelAttribute("product") @Valid Product product, BindingResult bindingResult){
-
+        productNameValidation.validate(product,bindingResult);
         if(bindingResult.hasErrors()){
             return "product/create";
         }
@@ -56,6 +58,7 @@ public class ProductsController {
     public String editPatch(@PathVariable("id") int id,
                             @ModelAttribute("product")@Valid Product product,
                             BindingResult bindingResult){
+        productNameValidation.validate(product,bindingResult);
         if(bindingResult.hasErrors()){
             return "product/edit";
         }
