@@ -19,7 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @RestController
-@RequestMapping("market/api/products")
+@RequestMapping("market/api/product")
 public class ProductsRESTController {
 
     private final ProductsService productsService;
@@ -57,11 +57,11 @@ public class ProductsRESTController {
                                              BindingResult bindingResult){
         productDTONameValidation.validate(productDTO,bindingResult);
         if(bindingResult.hasErrors()){
-            StringBuilder message =new StringBuilder();
+            StringBuilder message=new StringBuilder();
             List<FieldError> errors=bindingResult.getFieldErrors();
             for(FieldError error :errors){
                 message.append(error.getField())
-                        .append(" - ").append(error.getDefaultMessage()).append("; ");
+                        .append("-").append(error.getDefaultMessage()).append("; ");
             }
             throw new ProductNotCreatedException(message.toString());
         }
@@ -78,7 +78,7 @@ public class ProductsRESTController {
             List<FieldError> errors=bindingResult.getFieldErrors();
             for(FieldError error : errors){
                 message.append(error.getField())
-                        .append("-").append(error.getDefaultMessage()).append(";");
+                        .append("-").append(error.getDefaultMessage()).append("; ");
             }
             throw new ProductNotUpdatedException(message.toString());
         }

@@ -7,6 +7,7 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Table(name = "Product")
@@ -27,11 +28,18 @@ public class Product {
     @Min(value = 0,message = "The quantity must be greater than 0")
     private int quantity;
 
+    @Column(name = "description")
+    @NotEmpty(message = "Description should be not null")
+    private String description;
+
     @Column(name = "created_at")
     private LocalDateTime createdAt;
 
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
+
+    @OneToMany(mappedBy = "product",fetch = FetchType.LAZY)
+    private List<Feedback> feedbacks;
 
     public Product(){}
 
@@ -59,6 +67,14 @@ public class Product {
         this.quantity = quantity;
     }
 
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
     public LocalDateTime getCreatedAt() {
         return createdAt;
     }
@@ -73,5 +89,13 @@ public class Product {
 
     public void setUpdatedAt(LocalDateTime updatedAt) {
         this.updatedAt = updatedAt;
+    }
+
+    public List<Feedback> getFeedbacks() {
+        return feedbacks;
+    }
+
+    public void setFeedbacks(List<Feedback> feedbacks) {
+        this.feedbacks = feedbacks;
     }
 }

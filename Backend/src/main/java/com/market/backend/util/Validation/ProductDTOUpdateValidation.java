@@ -29,9 +29,11 @@ public class ProductDTOUpdateValidation implements Validator {
     public void validate(Object target, Errors errors) {
         ProductDTO productDTO=(ProductDTO) target;
         Optional<Product> product=productsService.findByProductName(productDTO.getName());
-        if(product.isPresent() && product.get().getQuantity()==(productDTO.getQuantity())) {
+        if(product.isPresent() && product.get().getQuantity()==(productDTO.getQuantity())
+                && product.get().getDescription().equals(productDTO.getDescription())) {
             errors.rejectValue("name", "", "Not changed");
             errors.rejectValue("quantity","","Not changed");
+            errors.rejectValue("description","","Not change");
         }
     }
 }

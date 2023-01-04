@@ -1,6 +1,5 @@
 package com.market.backend.dto;
 
-import jakarta.persistence.Column;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
@@ -15,6 +14,9 @@ public class ProductDTO {
     @NotNull(message = "Quantity should be not null")
     @Min(value = 0,message = "The quantity must be greater than 0")
     private int quantity;
+
+    @NotEmpty(message = "Description should be not empty")
+    private String description;
 
     public ProductDTO(){}
 
@@ -32,5 +34,13 @@ public class ProductDTO {
 
     public void setQuantity(int quantity) {
         this.quantity = quantity;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 }
