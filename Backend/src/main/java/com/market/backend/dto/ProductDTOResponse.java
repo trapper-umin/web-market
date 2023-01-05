@@ -1,25 +1,21 @@
 package com.market.backend.dto;
 
 import com.market.backend.models.Feedback;
-import jakarta.validation.constraints.*;
 
 import java.util.List;
 
-public class ProductDTO {
+public class ProductDTOResponse {
 
-    @NotEmpty(message = "Product name should be not empty")
-    @Size(min = 3,max = 255,message = "Product name size should be between 3 and 255")
     private String name;
 
-    @NotNull(message = "Quantity should be not null")
-    @Min(value = 0,message = "The quantity must be greater than 0")
     private int quantity;
 
-    @NotEmpty(message = "Description should be not empty")
-    @Size(max = 1000,message = "Max size description is 1000 characters")
     private String description;
 
-    public ProductDTO(){}
+    private double rating;
+
+
+    public ProductDTOResponse(){}
 
     public String getName() {
         return name;
@@ -44,4 +40,13 @@ public class ProductDTO {
     public void setDescription(String description) {
         this.description = description;
     }
+
+    public double getRating() {
+        return rating;
+    }
+
+    public void setRating(double rating) {
+        this.rating = rating;
+    }
+
 }
