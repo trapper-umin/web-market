@@ -2,6 +2,7 @@ package com.market.backend.services;
 
 import com.market.backend.models.Feedback;
 import com.market.backend.repositories.FeedbacksRepository;
+import com.market.backend.util.Exception.FeedbackNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -28,11 +29,28 @@ public class FeedbacksService {
         return feedbacksRepository.findByProduct(productsService.findById(productId));
     }
 
+    public List<Feedback> findByAuthorName(String author){
+        return feedbacksRepository.findByAuthor(author);
+    }
+
+    public Feedback findById(int id){
+        return feedbacksRepository.findById(id).orElseThrow(FeedbackNotFoundException::new);
+    }
+
     @Transactional
     public void createFeedbackForProduct(int productId,Feedback feedback){
         feedback.setCreatedAt(LocalDateTime.now());
         feedback.setUpdatedAt(LocalDateTime.now());
         feedback.setProduct(productsService.findById(productId));
+        feedbacksRepository.save(feedback);
+    }
+
+    @Transactional
+    public void updateFeedbackById(int id,Feedback feedback){
+        feedback.setId(id);
+        feedback.setCreatedAt(feedbacksRepository.findById(id).get().getCreatedAt());
+        feedback.setUpdatedAt(LocalDateTime.now());
+        feedback.setProduct(feedbacksRepository.findById(id).get().getProduct());
         feedbacksRepository.save(feedback);
     }
 }

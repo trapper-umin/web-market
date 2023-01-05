@@ -1,5 +1,6 @@
 package com.market.backend.services;
 
+import com.market.backend.models.Feedback;
 import com.market.backend.models.Product;
 import com.market.backend.repositories.ProductsRepository;
 import com.market.backend.util.Exception.ProductNotFoundException;
@@ -15,16 +16,28 @@ import java.util.Optional;
 public class ProductsService {
 
     private final ProductsRepository productsRepository;
+
+
     public ProductsService(ProductsRepository productsRepository){
         this.productsRepository=productsRepository;
+
     }
 
+
     public List<Product> findAll(){
-        return productsRepository.findAll();
+        List<Product>products= productsRepository.findAll();
+        for(Product product : products){
+            product.setRating(averageRating(product.getFeedbacks()));
+        }
+        return products;
     }
 
     public Product findById(int id){
-        return productsRepository.findById(id).orElseThrow(ProductNotFoundException::new);
+        Optional<Product>product= productsRepository.findById(id);
+        if(product.isPresent()){
+            product.get().setRating(averageRating(product.get().getFeedbacks()));
+            return product.get();
+        }else throw new ProductNotFoundException();
     }
 
     public Optional<Product> findByProductName(String name){
@@ -49,6 +62,21 @@ public class ProductsService {
     @Transactional
     public void delete(int id){
         productsRepository.deleteById(id);
+    }
+
+    private double averageRating(List<Feedback> feedbacks){
+        int sum=0;
+        int i=0;
+        if(feedbacks.size()==0){
+            return 0;
+        }
+        for(Feedback feedback : feedbacks){
+            sum+=feedback.getMark();
+            i++;
+        }
+
+        double rating=sum/i;
+        return rating;
     }
 
 }

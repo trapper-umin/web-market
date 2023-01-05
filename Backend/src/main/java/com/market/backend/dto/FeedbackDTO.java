@@ -1,9 +1,6 @@
 package com.market.backend.dto;
 
-import jakarta.validation.constraints.Max;
-import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.*;
 
 public class FeedbackDTO {
 
@@ -12,11 +9,12 @@ public class FeedbackDTO {
     private String author;
 
     @NotNull(message = "Mark should be not null")
-    //@Size(min = 1,max = 100,message = "Mark should be between 0 and 100")
+    @Min(value = 0,message = "Mark should be greater than 0")
+    @Max(value = 100,message = "Mark should be less than 100")
     private int mark;
 
     @NotEmpty(message = "Message should be not empty")
-    @Max(value = 1000,message = "Max message size is 1000 characters")
+    @Size(max = 1000,message = "Max message size is 1000 characters")
     private String message;
 
     public FeedbackDTO(){}

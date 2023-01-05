@@ -41,6 +41,9 @@ public class Product {
     @OneToMany(mappedBy = "product",fetch = FetchType.LAZY)
     private List<Feedback> feedbacks;
 
+    @Transient
+    private double rating;
+
     public Product(){}
 
     public int getId() {
@@ -97,5 +100,13 @@ public class Product {
 
     public void setFeedbacks(List<Feedback> feedbacks) {
         this.feedbacks = feedbacks;
+    }
+
+    public double getRating() {
+        return rating;
+    }
+
+    public void setRating(double rating) {
+        this.rating = rating;
     }
 }

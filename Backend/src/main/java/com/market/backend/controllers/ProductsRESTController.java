@@ -1,6 +1,7 @@
 package com.market.backend.controllers;
 
 import com.market.backend.dto.ProductDTO;
+import com.market.backend.dto.ProductDTOResponse;
 import com.market.backend.models.Product;
 import com.market.backend.services.ProductsService;
 import com.market.backend.util.Exception.*;
@@ -36,20 +37,20 @@ public class ProductsRESTController {
     }
 
     @GetMapping()
-    public List<ProductDTO> index(){
+    public List<ProductDTOResponse> index(){
         List<Product> products=productsService.findAll();
         if(products.size()==0){
             throw new ThereAreNoProductsException();
         }
-        List<ProductDTO> productsDTO=new ArrayList<>();
+        List<ProductDTOResponse> productsDTOResponse=new ArrayList<>();
         for(Product product : products)
-            productsDTO.add(convertToProductDTO(product));
-        return productsDTO;
+            productsDTOResponse.add(convertToProductDTOResponse(product));
+        return productsDTOResponse; 
     }
 
     @GetMapping("/{id}")
-    public ProductDTO index(@PathVariable("id") int id){
-        return convertToProductDTO(productsService.findById(id));
+    public ProductDTOResponse index(@PathVariable("id") int id){
+        return convertToProductDTOResponse(productsService.findById(id));
     }
 
     @PostMapping("/new")
@@ -139,4 +140,6 @@ public class ProductsRESTController {
     private ProductDTO convertToProductDTO(Product product){
         return modelMapper.map(product,ProductDTO.class);
     }
+
+    private ProductDTOResponse convertToProductDTOResponse(Product product){return modelMapper.map(product, ProductDTOResponse.class);}
 }
