@@ -3,7 +3,7 @@ package com.market.backend.services;
 import com.market.backend.models.Feedback;
 import com.market.backend.models.Product;
 import com.market.backend.repositories.ProductsRepository;
-import com.market.backend.util.Exception.ProductNotFoundException;
+import com.market.backend.util.Exception.Product.ProductNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -75,8 +75,7 @@ public class ProductsService {
             i++;
         }
 
-        double rating=sum/i;
-        return rating;
+        return sum/i;
     }
 
 }

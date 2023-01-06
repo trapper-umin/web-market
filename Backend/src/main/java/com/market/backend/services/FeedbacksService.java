@@ -2,7 +2,8 @@ package com.market.backend.services;
 
 import com.market.backend.models.Feedback;
 import com.market.backend.repositories.FeedbacksRepository;
-import com.market.backend.util.Exception.FeedbackNotFoundException;
+import com.market.backend.util.Exception.Feedback.FeedbackNotDeletedException;
+import com.market.backend.util.Exception.Feedback.FeedbackNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -52,5 +53,13 @@ public class FeedbacksService {
         feedback.setUpdatedAt(LocalDateTime.now());
         feedback.setProduct(feedbacksRepository.findById(id).get().getProduct());
         feedbacksRepository.save(feedback);
+    }
+
+    @Transactional
+    public boolean deleteById(int id){
+        if(feedbacksRepository.findById(id).isPresent()){
+            feedbacksRepository.deleteById(id);
+            return true;
+        }else return false;
     }
 }

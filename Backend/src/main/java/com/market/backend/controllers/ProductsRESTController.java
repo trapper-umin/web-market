@@ -4,7 +4,7 @@ import com.market.backend.dto.ProductDTO;
 import com.market.backend.dto.ProductDTOResponse;
 import com.market.backend.models.Product;
 import com.market.backend.services.ProductsService;
-import com.market.backend.util.Exception.*;
+import com.market.backend.util.Exception.Product.*;
 import com.market.backend.util.Validation.ProductDTONameValidation;
 import com.market.backend.util.Validation.ProductDTOUpdateValidation;
 import jakarta.validation.Valid;
@@ -45,7 +45,7 @@ public class ProductsRESTController {
         List<ProductDTOResponse> productsDTOResponse=new ArrayList<>();
         for(Product product : products)
             productsDTOResponse.add(convertToProductDTOResponse(product));
-        return productsDTOResponse; 
+        return productsDTOResponse;
     }
 
     @GetMapping("/{id}")

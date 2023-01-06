@@ -3,9 +3,8 @@ package com.market.backend.controllers;
 import com.market.backend.dto.FeedbackDTO;
 import com.market.backend.models.Feedback;
 import com.market.backend.services.FeedbacksService;
-import com.market.backend.util.Exception.FeedbackErrorResponse;
-import com.market.backend.util.Exception.FeedbackNotCreatedException;
-import com.market.backend.util.Exception.FeedbackNotFoundException;
+import com.market.backend.util.Exception.Feedback.*;
+import com.market.backend.util.GoodResponse;
 import jakarta.validation.Valid;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
@@ -20,7 +19,7 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("market/api/product/feedback")
-public class FeedbacksRESTController {
+public class FeedbacksRESTController extends ExceptionHandlerController {
 
     private final FeedbacksService feedbacksService;
     private final ModelMapper modelMapper;
@@ -39,7 +38,6 @@ public class FeedbacksRESTController {
 
     @GetMapping("/{product_id}/all")
     public List<FeedbackDTO> showFeedbacksAtProduct(@PathVariable("product_id") int productId){
-
         return feedbacksService.showFeedbacksAtProduct(productId).stream().map(this::convertToFeedbackDTO)
                 .collect(Collectors.toList());
     }
@@ -50,9 +48,9 @@ public class FeedbacksRESTController {
     }
 
     @PostMapping("/{product_id}")
-    public ResponseEntity<HttpStatus> createFeedback(@PathVariable("product_id") int productId,
-                                                     @RequestBody @Valid FeedbackDTO feedbackDTO,
-                                                     BindingResult bindingResult){
+    public ResponseEntity<GoodResponse> createFeedback(@PathVariable("product_id") int productId,
+                                                       @RequestBody @Valid FeedbackDTO feedbackDTO,
+                                                       BindingResult bindingResult){
         System.out.println("Message length: "+feedbackDTO.getMessage().length());
         if(bindingResult.hasErrors()){
             StringBuilder message=new StringBuilder();
@@ -65,18 +63,30 @@ public class FeedbacksRESTController {
         }
 
         feedbacksService.createFeedbackForProduct(productId,convertToFeedback(feedbackDTO));
-        return new ResponseEntity<>(HttpStatus.OK);
+        return new ResponseEntity<>(new GoodResponse("Feedback was left"),HttpStatus.OK);
     }
 
     @PatchMapping("/{id}/edit")
-    public HttpStatus updateFeedback(@PathVariable("id") int id,
+    public ResponseEntity<GoodResponse> updateFeedback(@PathVariable("id") int id,
                                      @RequestBody @Valid FeedbackDTO feedbackDTO,
                                      BindingResult bindingResult){
         if(bindingResult.hasErrors()){
-            //TODO
+            StringBuilder message=new StringBuilder();
+            List<FieldError> errors=bindingResult.getFieldErrors();
+            for(FieldError error : errors){
+                message.append(error.getField()).append("-").append(error.getDefaultMessage()).append("; ");
+            }
+            throw new FeedbackNotUpdatedException(message.toString());
         }
         feedbacksService.updateFeedbackById(id,convertToFeedback(feedbackDTO));
-        return HttpStatus.OK;
+        return new ResponseEntity<>(new GoodResponse("Feedback was updated"),HttpStatus.OK);
+    }
+
+    @DeleteMapping("/{id}")
+    public HttpStatus deleteById(@PathVariable("id") int id){
+        if(feedbacksService.deleteById(id)){
+            return HttpStatus.OK;
+        }else throw new FeedbackNotDeletedException("Feedback with this ID wasn't found");
     }
 
     @ExceptionHandler
@@ -92,9 +102,19 @@ public class FeedbacksRESTController {
     @ExceptionHandler
     private ResponseEntity<FeedbackErrorResponse> handleException(FeedbackNotCreatedException e){
         FeedbackErrorResponse response=new FeedbackErrorResponse(
-            e.getMessage(),
-            HttpStatus.BAD_REQUEST,
-            LocalDateTime.now()
+                e.getMessage(),
+                HttpStatus.BAD_REQUEST,
+                LocalDateTime.now()
+        );
+        return new ResponseEntity<>(response,HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler
+    private ResponseEntity<FeedbackErrorResponse> handleException(FeedbackNotUpdatedException e){
+        FeedbackErrorResponse response=new FeedbackErrorResponse(
+                e.getMessage(),
+                HttpStatus.BAD_REQUEST,
+                LocalDateTime.now()
         );
         return new ResponseEntity<>(response,HttpStatus.BAD_REQUEST);
     }
