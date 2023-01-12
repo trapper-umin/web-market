@@ -37,7 +37,7 @@ public class ProductsService {
         if(product.isPresent()){
             product.get().setRating(averageRating(product.get().getFeedbacks()));
             return product.get();
-        }else throw new ProductNotFoundException();
+        }else throw new ProductNotFoundException("Product with this ID wasn't found");
     }
 
     public Optional<Product> findByProductName(String name){

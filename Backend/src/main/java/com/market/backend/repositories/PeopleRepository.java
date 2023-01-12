@@ -1,12 +1,13 @@
 package com.market.backend.repositories;
 
-import com.market.backend.models.Product;
+import com.market.backend.models.Person;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
 
 @Repository
-public interface ProductsRepository  extends JpaRepository<Product,Integer> {
-    Optional<Product> findByName(String name);
+public interface PeopleRepository extends JpaRepository<Person,Integer> {
+    Optional<Person> findByName(String name);
+
 }

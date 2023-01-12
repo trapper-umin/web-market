@@ -13,15 +13,15 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @RestController
+@FeedbackExceptionHandler
 @RequestMapping("market/api/product/feedback")
-public class FeedbacksRESTController extends ExceptionHandlerController {
+public class FeedbacksRESTController {
 
-    private final FeedbacksService feedbacksService;
+    private final  FeedbacksService feedbacksService;
     private final ModelMapper modelMapper;
 
     public FeedbacksRESTController(FeedbacksService feedbacksService,
@@ -87,36 +87,6 @@ public class FeedbacksRESTController extends ExceptionHandlerController {
         if(feedbacksService.deleteById(id)){
             return HttpStatus.OK;
         }else throw new FeedbackNotDeletedException("Feedback with this ID wasn't found");
-    }
-
-    @ExceptionHandler
-    private ResponseEntity<FeedbackErrorResponse> handleException(FeedbackNotFoundException e){
-        FeedbackErrorResponse response=new FeedbackErrorResponse(
-          "Feedback wasn't find",
-                HttpStatus.NOT_FOUND,
-                LocalDateTime.now()
-        );
-        return new ResponseEntity<>(response,HttpStatus.NOT_FOUND);
-    }
-
-    @ExceptionHandler
-    private ResponseEntity<FeedbackErrorResponse> handleException(FeedbackNotCreatedException e){
-        FeedbackErrorResponse response=new FeedbackErrorResponse(
-                e.getMessage(),
-                HttpStatus.BAD_REQUEST,
-                LocalDateTime.now()
-        );
-        return new ResponseEntity<>(response,HttpStatus.BAD_REQUEST);
-    }
-
-    @ExceptionHandler
-    private ResponseEntity<FeedbackErrorResponse> handleException(FeedbackNotUpdatedException e){
-        FeedbackErrorResponse response=new FeedbackErrorResponse(
-                e.getMessage(),
-                HttpStatus.BAD_REQUEST,
-                LocalDateTime.now()
-        );
-        return new ResponseEntity<>(response,HttpStatus.BAD_REQUEST);
     }
 
     private Feedback convertToFeedback(FeedbackDTO feedbackDTO){

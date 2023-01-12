@@ -40,6 +40,7 @@ public class FeedbacksService {
 
     @Transactional
     public void createFeedbackForProduct(int productId,Feedback feedback){
+        productsService.findById(productId);
         feedback.setCreatedAt(LocalDateTime.now());
         feedback.setUpdatedAt(LocalDateTime.now());
         feedback.setProduct(productsService.findById(productId));
@@ -48,6 +49,8 @@ public class FeedbacksService {
 
     @Transactional
     public void updateFeedbackById(int id,Feedback feedback){
+        if(feedbacksRepository.findById(id).isEmpty())
+            throw new FeedbackNotFoundException();
         feedback.setId(id);
         feedback.setCreatedAt(feedbacksRepository.findById(id).get().getCreatedAt());
         feedback.setUpdatedAt(LocalDateTime.now());
