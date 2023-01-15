@@ -1,17 +1,18 @@
-package com.market.backend.util.Exception;
+package com.market.backend.util.Exception.Feedback;
 
 import org.springframework.http.HttpStatus;
 
 import java.time.LocalDateTime;
 
-public class ProductErrorResponse {
+public class FeedbackErrorResponse {
+
     private String message;
     private HttpStatus status;
     private LocalDateTime time;
 
-    public ProductErrorResponse(String message,HttpStatus status, LocalDateTime time) {
+    public FeedbackErrorResponse(String message, HttpStatus status, LocalDateTime time) {
         this.message = message;
-        this.status=status;
+        this.status = status;
         this.time = time;
     }
 

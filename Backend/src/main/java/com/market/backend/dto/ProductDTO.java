@@ -12,7 +12,7 @@ public class ProductDTO {
     private String name;
 
     @NotNull(message = "Quantity should be not null")
-    @Min(value = 0,message = "The quantity must be greater than 0")
+    @Min(value = 0, message = "The quantity must be greater than 0")
     private int quantity;
 
     @NotEmpty(message = "Description should be not empty")

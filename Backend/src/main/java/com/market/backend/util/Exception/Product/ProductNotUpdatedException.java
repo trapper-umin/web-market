@@ -1,4 +1,4 @@
-package com.market.backend.util.Exception;
+package com.market.backend.util.Exception.Product;
 
 public class ProductNotUpdatedException extends RuntimeException{
     public ProductNotUpdatedException(String message){

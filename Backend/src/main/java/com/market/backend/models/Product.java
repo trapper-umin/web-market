@@ -5,6 +5,7 @@ import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+import org.hibernate.annotations.Cascade;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -40,6 +41,11 @@ public class Product {
 
     @OneToMany(mappedBy = "product",fetch = FetchType.LAZY)
     private List<Feedback> feedbacks;
+
+    @ManyToOne()
+    @JoinColumn(name = "person_id",referencedColumnName = "person_id")
+    @Cascade(org.hibernate.annotations.CascadeType.SAVE_UPDATE)
+    private Person owner;
 
     @Transient
     private double rating;
@@ -109,4 +115,19 @@ public class Product {
     public void setRating(double rating) {
         this.rating = rating;
     }
+
+    public Person getOwner() {
+        return owner;
+    }
+
+    public void setOwner(Person owner) {
+        this.owner = owner;
+    }
+
+    @Override
+    public String toString(){
+        return name;
+    }
+
+
 }
