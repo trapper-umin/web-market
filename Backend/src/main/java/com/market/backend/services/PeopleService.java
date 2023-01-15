@@ -15,13 +15,19 @@ import java.util.Optional;
 public class PeopleService {
 
     private final PeopleRepository peopleRepository;
+    private final ProductsService productsService;
 
-    public PeopleService(PeopleRepository peopleRepository){
+    public PeopleService(PeopleRepository peopleRepository, ProductsService productsService){
         this.peopleRepository=peopleRepository;
+        this.productsService=productsService;
     }
 
     public List<Person> findAll(){
-        return peopleRepository.findAll();
+        List<Person>people=peopleRepository.findAll();
+        for(Person person : people){
+            person.setProducts(productsService.findByOwner(person));
+        }
+        return people;
     }
 
     public Person findById(int id){
@@ -29,13 +35,14 @@ public class PeopleService {
     }
 
     public Optional<Person> findByName(String name){
-        return peopleRepository.findByName(name);
+        return peopleRepository.findByUsername(name);
     }
 
     @Transactional
     public void create(Person person){
         person.setCreatedAt(LocalDateTime.now());
         person.setUpdatedAt(LocalDateTime.now());
+        person.setRole("USER");
         peopleRepository.save(person);
     }
 
@@ -48,6 +55,7 @@ public class PeopleService {
         person.setId(id);
         person.setCreatedAt(personOld.get().getCreatedAt());
         person.setUpdatedAt(LocalDateTime.now());
+        person.setRole(personOld.get().getRole());
         peopleRepository.save(person);
     }
 

@@ -4,6 +4,7 @@ import com.market.backend.dto.PersonDTO;
 import com.market.backend.dto.PersonDTOResponse;
 import com.market.backend.models.Person;
 import com.market.backend.services.PeopleService;
+import com.market.backend.services.OperationWithAddDropService;
 import com.market.backend.util.Exception.Person.PersonExceptionHandler;
 import com.market.backend.util.Exception.Person.PersonNotCreatedException;
 import com.market.backend.util.Exception.Person.PersonNotUpdatedException;
@@ -27,14 +28,17 @@ import java.util.List;
 public class PeopleRESTController {
 
     private final PeopleService peopleService;
+    private final OperationWithAddDropService operationWithAddDropService;
     private final ModelMapper modelMapper;
     private final PersonDTONameValidation personDTONameValidation;
 
     public PeopleRESTController(PeopleService peopleService, ModelMapper modelMapper,
-                                PersonDTONameValidation personDTONameValidation){
+                                PersonDTONameValidation personDTONameValidation,
+                                OperationWithAddDropService operationWithAddDropService){
         this.peopleService=peopleService;
         this.modelMapper = modelMapper;
         this.personDTONameValidation=personDTONameValidation;
+        this.operationWithAddDropService =operationWithAddDropService;
     }
 
     @GetMapping
@@ -89,6 +93,14 @@ public class PeopleRESTController {
     public ResponseEntity<GoodResponse> delete(@PathVariable("id") int id){
         peopleService.delete(id);
         return new ResponseEntity<>(new GoodResponse("User was delete"),HttpStatus.OK);
+    }
+
+    @PatchMapping(path = "/{id}/product/{product_id}",params = {"operation"})
+    public ResponseEntity<GoodResponse> operationWithProduct(@RequestParam("operation") String operation,
+                                                             @PathVariable("id") int id,
+                                                             @PathVariable("product_id") int productId){
+        operationWithAddDropService.operationWithProductAndPerson(id,productId,operation);
+        return new ResponseEntity<>(new GoodResponse("Successful"),HttpStatus.OK);
     }
 
     private PersonDTOResponse convertToPersonDTOResponse(Person person){

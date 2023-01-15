@@ -4,25 +4,25 @@ import java.util.List;
 
 public class PersonDTOResponse {
 
-    private String name;
+    private String username;
 
-    private List<ProductDTO> productDTOS;
+    private List<ProductDTO> products;
 
     public PersonDTOResponse(){}
 
-    public String getName() {
-        return name;
+    public String getUsername() {
+        return username;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setUsername(String username) {
+        this.username = username;
     }
 
-    public List<ProductDTO> getProductDTOS() {
-        return productDTOS;
+    public List<ProductDTO> getProducts() {
+        return products;
     }
 
-    public void setProductDTOS(List<ProductDTO> productDTOS) {
-        this.productDTOS = productDTOS;
+    public void setProducts(List<ProductDTO> products) {
+        this.products = products;
     }
 }

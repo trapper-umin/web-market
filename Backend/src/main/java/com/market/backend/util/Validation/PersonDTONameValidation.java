@@ -23,7 +23,7 @@ public class PersonDTONameValidation implements Validator {
     @Override
     public void validate(Object target, Errors errors) {
         PersonDTO personDTO=(PersonDTO) target;
-        if(peopleService.findByName(personDTO.getName()).isPresent()){
+        if(peopleService.findByName(personDTO.getUsername()).isPresent()){
             errors.rejectValue("name","","User with this name already exist");
         }
     }

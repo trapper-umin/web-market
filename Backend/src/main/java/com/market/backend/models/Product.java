@@ -115,4 +115,19 @@ public class Product {
     public void setRating(double rating) {
         this.rating = rating;
     }
+
+    public Person getOwner() {
+        return owner;
+    }
+
+    public void setOwner(Person owner) {
+        this.owner = owner;
+    }
+
+    @Override
+    public String toString(){
+        return name;
+    }
+
+
 }

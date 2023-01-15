@@ -1,8 +1,10 @@
 package com.market.backend.services;
 
 import com.market.backend.models.Feedback;
+import com.market.backend.models.Person;
 import com.market.backend.models.Product;
 import com.market.backend.repositories.ProductsRepository;
+import com.market.backend.util.Exception.Person.PersonOperationNotDoneException;
 import com.market.backend.util.Exception.Product.ProductNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,7 +22,6 @@ public class ProductsService {
 
     public ProductsService(ProductsRepository productsRepository){
         this.productsRepository=productsRepository;
-
     }
 
 
@@ -60,9 +61,21 @@ public class ProductsService {
     }
 
     @Transactional
+    public void updateOwnerOfProduct(Product product){
+        product.setUpdatedAt(LocalDateTime.now());
+        product.setOwner(null);
+        productsRepository.save(product);
+    }
+
+    @Transactional
     public void delete(int id){
         productsRepository.deleteById(id);
     }
+
+    public List<Product> findByOwner(Person person){
+        return productsRepository.findByOwner(person);
+    }
+
 
     private double averageRating(List<Feedback> feedbacks){
         int sum=0;
